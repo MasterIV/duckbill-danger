@@ -50,6 +50,7 @@ void cursor_place() {
 	
   	set_bkg_tiles(0, 0, 20, 18, current_level);
 	command_current++;
+	sound_correct();
 }
 
 void cursor_update() {
@@ -63,7 +64,7 @@ void cursor_update() {
 	  case J_LEFT: cursor_move(-2, 0); break;
 	  case J_RIGHT: cursor_move(2, 0); break;
 	  case J_A: cursor_place(); return;
-	  // case J_SELECT: return;
+	  case J_B: display_level(); return;
 	}
   } else {
 	cursor.x += cursor.dir_x;

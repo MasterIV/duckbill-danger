@@ -17,8 +17,8 @@
 #define HazardDown 6
 #define HazardLeft 7
 #define HazardRight 5
-#define MapBlockedPlantA 64
-#define MapBlockedPlantB 68
+#define MapBlockedPlantA 68
+#define MapBlockedPlantB 72
 #define MapBlockedRockA 14
 #define MapBlockedRockB 80
 

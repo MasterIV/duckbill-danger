@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include "level_tiles.tiles"
 #include "example_level.map"
 
 #define MAP_SIZE 63
@@ -7,6 +8,8 @@
 void show_level(UBYTE *src) {
   UBYTE i, t, index;
   UWORD offset, j, row, col;
+  
+  DISPLAY_OFF;
   
   // reset gloabls
   defeat = 0;
@@ -33,7 +36,7 @@ void show_level(UBYTE *src) {
 	  unit_pos[index] = 16 + (col<<4);
 	  unit_pos[index+1] = 24 + (row<<4);
 	  unit_set_direction(index, t%4);
-	  unit_pos[index+6] = t > 3; 
+	  unit_pos[index+5] = t > 3; 
 	  
 	  unit_show(unit_count, index, 0);
 	  
@@ -51,15 +54,6 @@ void show_level(UBYTE *src) {
 	current_level[42+offset] = t+3;
   }
   
-    // load commands
-  /*command_max = sizeof(src) / sizeof(src[0]);
-  for (i = MAP_SIZE; i != command_max; i++) {
-    commands[i-MAP_SIZE] = src[i];
-  }
-  command_max -= MAP_SIZE;
-  */
-  // hide unused units
-  
   
   // show commands
   for(i = 0; i != command_max; i++) {
@@ -67,35 +61,44 @@ void show_level(UBYTE *src) {
   }
   
   current_level[COMMAND_INDEX_FIRST + 20] = 84;
+  set_bkg_data(0, 200, level_tiles);
   set_bkg_tiles(0, 0, 20, 18, current_level);
+  SHOW_SPRITES;
+  DISPLAY_ON;
 }
 
-const UBYTE level1_commands[] = {
-  CommandDown, CommandRight, CommandDown
-};
-const UBYTE level1[] = {
-  CritterDown,MapEmpty,MapEmpty,MapGoalOne,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapBlocked,MapEmpty,MapBlocked,MapBlockedPlantA,MapEmpty,MapBlocked,MapEmpty,MapEmpty,MapBlocked,
-  MapEmpty,MapGoalTwo,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapEmpty,MapBlocked,MapEmpty,MapBlocked,MapEmpty,MapBlockedPlantB,MapEmpty,MapBlocked,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapGoalThree,
-  MapBlockedRockA,MapEmpty,MapBlocked,MapEmpty,MapBlocked,MapEmpty,MapBlocked,MapEmpty,MapBlocked,
-};
 
-const UBYTE level2_commands[] = {
-  CommandUp, CommandDown, CommandLeft
-};
-const UBYTE level2[] = {
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapBlockedRockB,MapEmpty,
-  CritterRight,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapBlocked,MapEmpty,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapBlockedRockA,MapEmpty,MapEmpty,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapGoalTwo,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapBlocked,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-  MapGoalThree,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,MapEmpty,
-};
-
-const UBYTE level3_commands[] = {
-  CommandUp
-};
+void display_level() {
+	switch(level) {
+		case 0:
+			command_max = 1;
+			commands = level1_commands;
+			show_level(level1);
+			break;
+		case 1:
+			command_max = 3;
+			commands = level2_commands;
+			show_level(level2);
+			break;
+		case 2:
+			command_max = 2;
+			commands = level3_commands;
+			show_level(level3);
+			break;
+		case 3:
+			command_max = 2;
+			commands = level4_commands;
+			show_level(level4);
+			break;
+		case 4:
+			command_max = 5;
+			commands = level5_commands;
+			show_level(level5);
+			break;
+		case 5:
+			command_max = 4;
+			commands = level6_commands;
+			show_level(level6);
+			break;
+	}
+}

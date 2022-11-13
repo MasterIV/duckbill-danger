@@ -1,10 +1,11 @@
 #include <gb/gb.h>
 #include <stdio.h>
 #include "tiles.c"
-
-#include "level.tiles"
+#include "sfx.c"
+#include "song1.c"
 #include "units.tiles"
 
+UBYTE level = 5;
 UBYTE loop = 1;
 UBYTE defeat = 0;
 UBYTE current_level[360];
@@ -14,12 +15,7 @@ UBYTE goal_max = 2;
 
 UBYTE command_current = 0;
 UBYTE command_max = 4;
-UBYTE commands[] = {
-	CommandUp,
-	CommandRight,
-	CommandLeft,
-	CommandDown
-};
+const UBYTE *commands;
 
 // UBYTE level = 0;
 // UBYTE level_objects[63];
@@ -31,9 +27,11 @@ UBYTE commands[] = {
    16-31 Enemies / Hazards?
 */
 
-#include "cursor.c"
+#include "screens.c"
 #include "unit.c"
+#include "leveldata.c"
 #include "levels.c"
+#include "cursor.c"
 
 /*
 void display_level() {
@@ -54,29 +52,51 @@ void main() {
   
   VBK_REG = 1;
   VBK_REG = 0;
-
-  set_sprite_data(0, 200, units);
-  set_bkg_data(0, 200, level);
-
-  show_level(level1);
   
+  set_sprite_data(0, 200, units);
+  show_title();
+  
+  SHOW_BKG;
+  
+  waitpad(255);
+  
+  display_level();
   cursor_init();
   
-  SHOW_SPRITES;
-  SHOW_BKG;
-  DISPLAY_ON;
-  
+  UBYTE keys, musicCnt = 0;
+
+  init_sound();
+  song1();
+
   while(loop) {
     if( defeat ) {
 		// animate dying duck
-		// show game over screen
+		show_defeat();
   		waitpad(255);
-  		show_level(level1);
-  	} else if( command_current == command_max )
+  		display_level();
+  	} else if (goal_count == goal_max) {
+		show_win();
+  		waitpad(255);
+		level++;
+  		display_level();
+	} else if( command_current == command_max ) {
+	  keys = joypad();
+  
+  	  if(keys == J_B) { 
+  		display_level();
+	  } else {
 		units_update();
-	else
+	  }
+	} else {
 		cursor_update();
+	}
 
 	wait_vbl_done();
+	musicCnt++;
+	if (musicCnt == 4) {
+		update_music();
+		musicCnt = 0;
+	}
+	
   }
 }
