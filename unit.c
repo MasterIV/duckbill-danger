@@ -1,8 +1,15 @@
 #define UNIT_SPRITE_INDEX 8
+#define UNIT_MAX_X 152
+#define UNIT_MAX_Y 128
+#define UNIT_GOOD 0
+#define UNIT_BAD 1
+#define UNIT_DEAD 2
 
 UBYTE unit_animation = 0;
 UBYTE unit_count = 0;
-WORD unit_pos[20];
+
+// x, y, d, mx, my, type (god, bad, dead, victory)
+WORD unit_pos[60];
 
 const UBYTE unit_directions[] = {
   10,// up
@@ -22,10 +29,50 @@ void unit_set_direction(UBYTE index, UBYTE d) {
 	}
 }
 
+void unit_show(UBYTE i, UBYTE index, UBYTE frame) {
+    UBYTE  x, y, d;
+
+	// move sprites to critter position
+  	x = unit_pos[index] += unit_pos[index+3];
+	y = unit_pos[index+1] += unit_pos[index+4];
+  	move_sprite(UNIT_SPRITE_INDEX + (i<<1), x, y);
+  	move_sprite(UNIT_SPRITE_INDEX + (i<<1)+1, x+8, y);
+	
+	// set right animation sprite in correct direction
+	d = unit_pos[index+2];
+    set_sprite_tile(UNIT_SPRITE_INDEX + (i<<1), unit_directions[d]+frame);
+    set_sprite_tile(UNIT_SPRITE_INDEX + (i<<1)+1, unit_directions[d]+frame+2);
+}
+
+void unit_defeat(UBYTE index) {
+	defeat = index+1;
+}
+
+void unit_check_victory(UBYTE index, UBYTE goal) {
+	if(goal != goal_count) {
+		// wrong goal order!
+		unit_defeat(index);
+		return;
+	}
+		
+	unit_pos[index+5] = 3;
+	goal_count++;
+	
+	if(goal_count == goal_max) {
+		// victory!
+	}
+}
+
 UBYTE get_tile_at(UBYTE x, UBYTE y) {
 	WORD t = ((x-8)>>3) + ((y-16)>>3)*20;
 	
-	if(x < 16 || y < 24 || x > 152 || y > 144 )
+	if(x < 16 || y < 24 || x > UNIT_MAX_X || y > UNIT_MAX_Y )
+		return MapBlocked;
+	if(current_level[t] == MapBlockedPlantA)
+		return MapBlocked;
+	if(current_level[t] == MapBlockedPlantB)
+		return MapBlocked;
+	if(current_level[t] == MapBlockedRockB)
 		return MapBlocked;
 		
 	return current_level[t];
@@ -38,38 +85,28 @@ UBYTE unit_get_destination(UBYTE index) {
 	);
 }
 
-void units_init(UBYTE count) {
-	unit_count = count;
-	
-	unit_pos[0] = 16; // x
-	unit_pos[1] = 24; // y
-	unit_set_direction(0, 0);
-
-	unit_pos[5] = 64; // x
-	unit_pos[6] = 88; // y
-	unit_set_direction(5, 1);
-	
-	// hide unused units sprites
-}
-
 void units_update() {
-  UBYTE i, index, x, y, d, frame;
+  UBYTE i, index, x, y, frame;
   
   frame = ((unit_animation>>2)%4)<<2;
   
   for(i = 0; i != unit_count; i++) {
-    index = i*5;
+    index = i*6;
   	x = unit_pos[index];
-	y = unit_pos[index+1];
-	
+	y = unit_pos[index+1];	
 	
   	if(unit_animation == 0) {
 		// check if current tile is command and adjust direction according to it
 		switch(get_tile_at(x, y)) {
 			case CommandUp: unit_set_direction(index, 0); break;
 			case CommandRight: unit_set_direction(index, 1); break;
-			case CommandLeft: unit_set_direction(index, 2); break;
-			case CommandDown: unit_set_direction(index, 3); break;
+			case CommandDown: unit_set_direction(index, 2); break;
+			case CommandLeft: unit_set_direction(index, 3); break;
+			case MapGoalOne: unit_check_victory(index, 0); break;
+			case MapGoalTwo: unit_check_victory(index, 1); break;
+			case MapGoalThree: unit_check_victory(index, 2); break;
+			case MapGoalFour: unit_check_victory(index, 3); break;
+			case MapTrap: unit_defeat(index); return;
 		}
 		
 		// while next tile is blocked, turn left
@@ -79,18 +116,7 @@ void units_update() {
 		}
 	} 
 	
-	
-	// move sprites to critter position
-  	x = unit_pos[index] += unit_pos[index+3];
-	y = unit_pos[index+1] += unit_pos[index+4];
-  	move_sprite(UNIT_SPRITE_INDEX + (i<<1), x, y);
-  	move_sprite(UNIT_SPRITE_INDEX + (i<<1)+1, x+8, y);
-	
-	// set right animation sprite in correct direction
-	d = unit_pos[index+2];
-    set_sprite_tile(UNIT_SPRITE_INDEX + (i<<1), unit_directions[d]+frame);
-    set_sprite_tile(UNIT_SPRITE_INDEX + (i<<1)+1, unit_directions[d]+frame+2);
-	
+	unit_show(i, index, frame);
   }
   
   if(unit_animation == 0) 

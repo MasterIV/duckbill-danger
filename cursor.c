@@ -1,7 +1,7 @@
 #define CURSOR_X_MIN 8
 #define CURSOR_X_MAX 136
 #define CURSOR_Y_MIN 16
-#define CURSOR_Y_MAX 128
+#define CURSOR_Y_MAX 112
 #define CURSOR_SPEED 8
 
 struct Cursor {
@@ -12,14 +12,6 @@ struct Cursor {
 } cursor;
 
 UBYTE cursor_counter;
-
-
-UBYTE commands[] = {
-	CommandUp,
-	CommandRight,
-	CommandLeft,
-	CommandDown
-};
 
 void cursor_move(WORD x, WORD y) {
   WORD destx = cursor.x + x * CURSOR_SPEED;
@@ -36,6 +28,30 @@ void cursor_move(WORD x, WORD y) {
   //move_cursor_sound();
 }
 
+void cursor_place() {
+	UWORD i;
+	
+	if(command_current == command_max)
+		return;
+		
+	i = ((cursor.x)>>3)  + ((cursor.y-8)>>3)*20;
+	
+	if(current_level[i] != MapEmpty)
+		return;
+	
+	current_level[i] = commands[command_current];
+	current_level[i+1] = commands[command_current]+1;
+	current_level[i+20] = commands[command_current]+2;
+	current_level[i+21] = commands[command_current]+3;
+  
+  	current_level[COMMAND_INDEX_FIRST + 20 + (command_current<<1)] = 85;
+	if(command_current+1 != command_max)
+  		current_level[COMMAND_INDEX_FIRST + 22 + (command_current<<1)] = 84;
+	
+  	set_bkg_tiles(0, 0, 20, 18, current_level);
+	command_current++;
+}
+
 void cursor_update() {
   UBYTE keys;
   keys = joypad();
@@ -46,8 +62,8 @@ void cursor_update() {
 	  case J_DOWN: cursor_move(0, 2); break;
 	  case J_LEFT: cursor_move(-2, 0); break;
 	  case J_RIGHT: cursor_move(2, 0); break;
-	  // case J_A: cursor_toggle(); return;
-	  // case J_SELECT:return;
+	  case J_A: cursor_place(); return;
+	  // case J_SELECT: return;
 	}
   } else {
 	cursor.x += cursor.dir_x;

@@ -9,11 +9,18 @@
 #define CommandRight 42
 #define CommandLeft 46
 #define CommandDown 50
-#define CritterUp 1
+#define CritterUp 0
 #define CritterDown 2
 #define CritterLeft 3
-#define CritterRight 4
-#define HazardUp 5
+#define CritterRight 1
+#define HazardUp 4
 #define HazardDown 6
 #define HazardLeft 7
-#define HazardRight 8
+#define HazardRight 5
+#define MapBlockedPlantA 64
+#define MapBlockedPlantB 68
+#define MapBlockedRockA 14
+#define MapBlockedRockB 80
+
+
+#define COMMAND_INDEX_FIRST 322
