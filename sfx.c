@@ -41,9 +41,9 @@ typedef struct {
 } Note;
 
 void init_sound() {
-  NR52_REG = 0x80U;
-  NR51_REG = 0x00U;
-  NR50_REG = 0xFFU;
+  NR52_REG = 0xFFU;
+  NR51_REG = 0xFFU;
+  NR50_REG = 0x77U;
 }
 UBYTE music_tick = 0;
 UBYTE music_beat = 0;

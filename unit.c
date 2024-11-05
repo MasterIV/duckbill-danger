@@ -7,8 +7,8 @@
 #define UNIT_TYPE_DEAD 2
 #define UNIT_TYPE_HATCHED 3
 
-#define UNIT_DEAD 98
-#define UNIT_HATCHED 114
+#define UNIT_DEAD 106
+#define UNIT_HATCHED 122
 
 UBYTE unit_animation = 0;
 UBYTE unit_count = 0;
@@ -114,27 +114,35 @@ void units_update() {
   
   frame = ((unit_animation>>2)%4)<<2;
   
+  if(unit_animation == 0) {
+		// Check if snake touches a cute little duckling
+  		for(i = 0; i != unit_count; i++) {
+    		index = i*6;
+	
+			if (unit_pos[index+5] == UNIT_TYPE_BAD) {
+				x = unit_pos[index];
+				y = unit_pos[index+1];	
+				
+				for (UBYTE j = 0; j != unit_count; j++) {
+					UBYTE otherIndex = j*6;
+					if (unit_pos[otherIndex+5] == UNIT_TYPE_GOOD) {
+						UBYTE otherX = unit_pos[otherIndex];
+						UBYTE otherY = unit_pos[otherIndex+1];
+						if (otherX == x && otherY == y) {
+							unit_defeat(otherIndex);
+						}
+					}
+				}
+			}
+  		}
+  }
+  
   for(i = 0; i != unit_count; i++) {
     index = i*6;
   	x = unit_pos[index];
 	y = unit_pos[index+1];	
 	
-  	if(unit_animation == 0 && unit_pos[index+5] != UNIT_TYPE_DEAD) {
-		if (unit_pos[index+5] == UNIT_TYPE_BAD) {
-		
-			// Check if snake touches a cute little duckling
-			for (UBYTE j = 0; j != unit_count; j++) {
-				UBYTE otherIndex = j*6;
-				if (unit_pos[otherIndex+5] == UNIT_TYPE_GOOD) {
-					UBYTE otherX = unit_pos[otherIndex];
-					UBYTE otherY = unit_pos[otherIndex+1];
-					if (otherX == x && otherY == y) {
-						unit_defeat(otherIndex);
-					}
-				}
-			}
-		}
-		
+  	if(unit_animation == 0 && unit_pos[index+5] != UNIT_TYPE_DEAD) {		
 		// check if current tile is command and adjust direction according to it
 		switch(get_tile_at(x, y)) {
 			case CommandUp: unit_set_direction(index, 0); break;
@@ -163,7 +171,10 @@ void units_update() {
 	unit_show(i, index, frame);
   }
   
-  if(unit_animation == 0) 
+  
+  if(unit_animation == 0) {
 		unit_animation = 16;
+  }
+  
   unit_animation--;
 }

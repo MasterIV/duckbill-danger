@@ -65,6 +65,7 @@ void cursor_update() {
 	  case J_RIGHT: cursor_move(2, 0); break;
 	  case J_A: cursor_place(); return;
 	  case J_B: display_level(); return;
+	  case J_SELECT: level++; display_level(); return;
 	}
   } else {
 	cursor.x += cursor.dir_x;

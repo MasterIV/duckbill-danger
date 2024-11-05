@@ -5,7 +5,7 @@
 #include "song1.c"
 #include "units.tiles"
 
-UBYTE level = 5;
+UBYTE level = 0;
 UBYTE loop = 1;
 UBYTE defeat = 0;
 UBYTE current_level[360];
@@ -53,7 +53,6 @@ void main() {
   VBK_REG = 1;
   VBK_REG = 0;
   
-  set_sprite_data(0, 200, units);
   show_title();
   
   SHOW_BKG;

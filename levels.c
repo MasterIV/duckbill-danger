@@ -54,6 +54,11 @@ void show_level(UBYTE *src) {
 	current_level[42+offset] = t+3;
   }
   
+  // hide unused units
+  for(i = unit_count; i != 10; i++) {
+  	move_sprite(UNIT_SPRITE_INDEX + (i<<1), 0, 0);
+  	move_sprite(UNIT_SPRITE_INDEX + (i<<1)+1, 0, 0);
+  }
   
   // show commands
   for(i = 0; i != command_max; i++) {
@@ -61,7 +66,8 @@ void show_level(UBYTE *src) {
   }
   
   current_level[COMMAND_INDEX_FIRST + 20] = 84;
-  set_bkg_data(0, 200, level_tiles);
+  set_sprite_data(0, 200, units);
+  set_bkg_data(0, 90, level_tiles);
   set_bkg_tiles(0, 0, 20, 18, current_level);
   SHOW_SPRITES;
   DISPLAY_ON;
@@ -91,14 +97,59 @@ void display_level() {
 			show_level(level4);
 			break;
 		case 4:
-			command_max = 5;
+			command_max = 2;
 			commands = level5_commands;
 			show_level(level5);
 			break;
 		case 5:
-			command_max = 4;
+			command_max = 3;
 			commands = level6_commands;
 			show_level(level6);
+			break;
+		case 6:
+			command_max = 6;
+			commands = level7_commands;
+			show_level(level7);
+			break;
+		case 7:
+			command_max = 6;
+			commands = level8_commands;
+			show_level(level8);
+			break;
+		case 8:
+			command_max = 5;
+			commands = level9_commands;
+			show_level(level9);
+			break;
+		case 9:
+			command_max = 2;
+			commands = level10_commands;
+			show_level(level10);
+			break;			
+		case 10:
+			command_max = 7;
+			commands = level11_commands;
+			show_level(level11);
+			break;	
+		case 11:
+			command_max = 6;
+			commands = level12_commands;
+			show_level(level12);
+			break;	
+		case 12:
+			command_max = 2;
+			commands = level13_commands;
+			show_level(level13);
+			break;
+		case 13:
+			command_max = 5;
+			commands = level14_commands;
+			show_level(level14);
+			break;
+		default:
+			command_max = 1;
+			commands = levelend_commands;
+			show_level(levelend);
 			break;
 	}
 }

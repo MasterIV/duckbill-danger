@@ -14,7 +14,7 @@ const Note song_1_c1[] = {
     {F4, WAVE_C, LONG},
     {G5, WAVE_C, LONG},
     {F5, WAVE_C, SHORT},
-    {G4, WAVE_C, LONG_LONG},
+    {G4, WAVE_C, LONG},
     {F5, WAVE_C, LONG},
     {G3, WAVE_C, LONG},
 
@@ -34,7 +34,7 @@ const Note song_1_c1[] = {
     {F4, WAVE_C, LONG},
     {G5, WAVE_C, LONG},
     {F5, WAVE_C, SHORT},
-    {G4, WAVE_C, LONG_LONG},
+    {G4, WAVE_C, LONG},
     {F5, WAVE_C, LONG},
     {G3, WAVE_C, LONG},
 
